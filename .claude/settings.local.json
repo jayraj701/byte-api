@@ -7,7 +7,8 @@
       "Bash(dotnet test *)",
       "Bash(powershell *)",
       "Bash(cmd /c rename \"C:\\\\Users\\\\Jayraj\\\\source\\\\repos\\\\jayraj701\\\\byte-api\\\\byte-api\" \"byte.api\")",
-      "Bash(cmd /c rename byte-api byte.api)"
+      "Bash(cmd /c rename byte-api byte.api)",
+      "Bash(git *)"
     ]
   }
 }

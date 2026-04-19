@@ -27,6 +27,7 @@
   <ItemGroup>
     <ProjectReference Include="..\byte.domain\byte.domain.csproj" />
     <ProjectReference Include="..\byte.infra\byte.infra.csproj" />
+    <ProjectReference Include="..\byte.api\byte.api.csproj" />
   </ItemGroup>
 
 </Project>

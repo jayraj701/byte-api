@@ -1,4 +1,8 @@
+using Byte.Api.Configuration;
+using Byte.Api.Services;
+using Byte.Domain.Interfaces;
 using Byte.Infra.Data;
+using Byte.Infra.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -30,8 +34,20 @@ public static class IOC
                     sqlOptions.CommandTimeout(30);
                 }));
 
-        // Register repositories here as they are created:
-        // services.AddScoped<ISomeRepository, SomeRepository>();
+        // Repositories
+        services.AddScoped<IPayrollBatchRepository, PayrollBatchRepository>();
+        services.AddScoped<IPayrollRecordRepository, PayrollRecordRepository>();
+        services.AddScoped<IPayrollCalculationRepository, PayrollCalculationRepository>();
+        services.AddScoped<IAuditLogRepository, AuditLogRepository>();
+
+        // Application services
+        services.AddScoped<FileParserService>();
+        services.AddScoped<AttendanceService>();
+        services.AddScoped<PayrollCalculationService>();
+        services.AddScoped<ApprovalService>();
+
+        // Options
+        services.Configure<PayrollRulesOptions>(config.GetSection("PayrollRules"));
 
         return services;
     }
@@ -65,6 +81,22 @@ public static class IOC
         services.AddAuthorization(options =>
         {
             options.AddPolicy("Admin", policy => policy.RequireRole("Admin"));
+        });
+
+        return services;
+    }
+
+    public static IServiceCollection AddCorsPolicy(this IServiceCollection services, IConfiguration config)
+    {
+        var allowedOrigins = config.GetSection("Cors:AllowedOrigins").Get<string[]>()
+            ?? ["http://localhost:3000", "http://localhost:5173"];
+
+        services.AddCors(options =>
+        {
+            options.AddPolicy("FrontendPolicy", policy =>
+                policy.WithOrigins(allowedOrigins)
+                      .AllowAnyHeader()
+                      .AllowAnyMethod());
         });
 
         return services;
