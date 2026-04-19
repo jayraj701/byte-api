@@ -1,5 +1,5 @@
-using Byte.Api.Configuration;
-using Byte.Api.Services;
+using Byte.Domain.Configuration;
+using Byte.Domain.Services;
 using Byte.Domain.Interfaces;
 using Byte.Infra.Data;
 using Byte.Infra.Repositories;
@@ -45,6 +45,7 @@ public static class IOC
         services.AddScoped<AttendanceService>();
         services.AddScoped<PayrollCalculationService>();
         services.AddScoped<ApprovalService>();
+        services.AddScoped<DashboardService>();
 
         // Options
         services.Configure<PayrollRulesOptions>(config.GetSection("PayrollRules"));

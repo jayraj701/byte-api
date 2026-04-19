@@ -1,5 +1,5 @@
-using Byte.Api.Services;
-using Byte.Api.Services.Models;
+using Byte.Domain.Services;
+using Byte.Domain.Services.Models;
 using ClosedXML.Excel;
 using Microsoft.AspNetCore.Http;
 

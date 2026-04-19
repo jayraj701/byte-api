@@ -2,11 +2,12 @@ using Byte.Domain.Entities;
 using Byte.Domain.Interfaces;
 using Microsoft.AspNetCore.Http;
 
-namespace Byte.Api.Services;
+namespace Byte.Domain.Services;
 
 public class AttendanceService(
     IPayrollBatchRepository batchRepo,
     IPayrollRecordRepository recordRepo,
+    IAuditLogRepository auditRepo,
     FileParserService parser)
 {
     public async Task<PayrollBatch> IngestAsync(IFormFile file, string actor, CancellationToken ct = default)
@@ -37,6 +38,16 @@ public class AttendanceService(
             };
             await recordRepo.AddAsync(record, ct);
         }
+
+        await auditRepo.AddAsync(new AuditLog
+        {
+            EventType = "FileUploaded",
+            BatchId = batch.Id,
+            Actor = actor,
+            Detail = $"Uploaded '{file.FileName}' with {rows.Count} records",
+            OccurredAt = DateTime.UtcNow,
+            CreatedBy = actor
+        }, ct);
 
         return batch;
     }

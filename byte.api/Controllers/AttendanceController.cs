@@ -1,4 +1,4 @@
-using Byte.Api.Services;
+using Byte.Domain.Services;
 using Byte.Domain.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

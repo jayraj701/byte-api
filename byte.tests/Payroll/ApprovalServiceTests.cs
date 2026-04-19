@@ -1,4 +1,4 @@
-using Byte.Api.Services;
+using Byte.Domain.Services;
 using Byte.Domain.Entities;
 using Byte.Domain.Interfaces;
 

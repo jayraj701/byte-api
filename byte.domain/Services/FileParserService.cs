@@ -1,11 +1,11 @@
-using Byte.Api.Services.Models;
+using Byte.Domain.Services.Models;
 using ClosedXML.Excel;
 using CsvHelper;
 using CsvHelper.Configuration;
 using Microsoft.AspNetCore.Http;
 using System.Globalization;
 
-namespace Byte.Api.Services;
+namespace Byte.Domain.Services;
 
 public class FileParserService
 {
@@ -60,7 +60,6 @@ public class FileParserService
     }
 }
 
-// CsvHelper map for AttendanceRow record
 public sealed class AttendanceRowMap : ClassMap<AttendanceRow>
 {
     public AttendanceRowMap()

@@ -1,7 +1,7 @@
 using Byte.Domain.Entities;
 using Byte.Domain.Interfaces;
 
-namespace Byte.Api.Services;
+namespace Byte.Domain.Services;
 
 public class ApprovalService(
     IPayrollBatchRepository batchRepo,

@@ -1,4 +1,4 @@
-namespace Byte.Api.Configuration;
+namespace Byte.Domain.Configuration;
 
 public class PayrollRulesOptions
 {
