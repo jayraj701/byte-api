@@ -1,5 +1,5 @@
-using Byte.Api.Configuration;
-using Byte.Api.Services;
+using Byte.Domain.Configuration;
+using Byte.Domain.Services;
 using Byte.Domain.Entities;
 using Byte.Domain.Interfaces;
 using Microsoft.Extensions.Options;

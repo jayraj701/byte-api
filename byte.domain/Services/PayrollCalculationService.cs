@@ -1,9 +1,9 @@
-using Byte.Api.Configuration;
+using Byte.Domain.Configuration;
 using Byte.Domain.Entities;
 using Byte.Domain.Interfaces;
 using Microsoft.Extensions.Options;
 
-namespace Byte.Api.Services;
+namespace Byte.Domain.Services;
 
 public class PayrollCalculationService(
     IPayrollRecordRepository recordRepo,

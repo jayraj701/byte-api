@@ -1,4 +1,4 @@
-namespace Byte.Api.Services.Models;
+namespace Byte.Domain.Services.Models;
 
 public record SummaryDto(
     string WorkerId,
