@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="byte.api.csproj" />
+  <Project Path="..\byte.domain\byte.domain.csproj" />
+  <Project Path="..\byte.infra\byte.infra.csproj" />
+  <Project Path="..\byte.tests\byte.tests.csproj" />
+</Solution>
