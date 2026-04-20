@@ -110,7 +110,7 @@ public class PayrollCalculationServiceTests
     }
 
     [Fact]
-    public async Task Status_ShouldBeReady_WhenNetPay_AboveThreshold()
+    public async Task Status_ShouldBeReady_WhenAdvanceDeduction_BelowGrossPay()
     {
         var record = MakeRecord(days: 22, dayRate: 85m);
         var batchId = record.BatchId;
@@ -124,9 +124,9 @@ public class PayrollCalculationServiceTests
     }
 
     [Fact]
-    public async Task Status_ShouldBeDisputed_WhenNetPay_BelowThreshold()
+    public async Task Status_ShouldBeDisputed_WhenAdvanceDeduction_ExceedsGrossPay()
     {
-        var record = MakeRecord(days: 1, dayRate: 10m, advance: 0m); // NetPay = 10
+        var record = MakeRecord(days: 1, dayRate: 10m, advance: 200m); // NetPay = 10 - 200 = -190
         var batchId = record.BatchId;
         _recordRepo.Setup(r => r.GetByBatchIdAsync(batchId, default)).ReturnsAsync([record]);
         _calcRepo.Setup(r => r.AddAsync(It.IsAny<PayrollCalculation>(), default)).ReturnsAsync((PayrollCalculation c, CancellationToken _) => c);
@@ -138,9 +138,9 @@ public class PayrollCalculationServiceTests
     }
 
     [Fact]
-    public async Task Status_ShouldBeReady_WhenNetPay_EqualsThreshold()
+    public async Task Status_ShouldBeReady_WhenAdvanceDeduction_EqualsGrossPay()
     {
-        var record = MakeRecord(days: 1, dayRate: 100m, advance: 0m); // NetPay = 100 = threshold
+        var record = MakeRecord(days: 1, dayRate: 100m, advance: 100m); // NetPay = 0, not negative
         var batchId = record.BatchId;
         _recordRepo.Setup(r => r.GetByBatchIdAsync(batchId, default)).ReturnsAsync([record]);
         _calcRepo.Setup(r => r.AddAsync(It.IsAny<PayrollCalculation>(), default)).ReturnsAsync((PayrollCalculation c, CancellationToken _) => c);

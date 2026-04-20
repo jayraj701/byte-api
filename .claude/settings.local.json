@@ -10,7 +10,8 @@
       "Bash(cmd /c rename byte-api byte.api)",
       "Bash(git *)",
       "Bash(xargs grep *)",
-      "Bash(grep -E '\\\\.\\(cs|csproj|json|config\\)$')"
+      "Bash(grep -E '\\\\.\\(cs|csproj|json|config\\)$')",
+      "Bash(grep -r \"Flagged\\\\|Ready\\\\|Disputed\\\\|Pending\" /c/Users/Jayraj/source/repos/jayraj701/byte-api --include=\"*.cs\" ! -path \"*/obj/*\" ! -path \"*/bin/*\" ! -path \"*/.vs/*\")"
     ]
   }
 }
