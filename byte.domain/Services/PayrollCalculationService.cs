@@ -25,7 +25,7 @@ public class PayrollCalculationService(
             var siteAllowance = record.DaysPresent * allowanceRate;
             var grossPay = basePay + siteAllowance;
             var netPay = grossPay - record.AdvanceDeduction;
-            var status = netPay < rules.DisputeThreshold ? "Disputed" : "Ready";
+            var status = netPay < 0 ? "Disputed" : "Ready";
 
             var calc = new PayrollCalculation
             {

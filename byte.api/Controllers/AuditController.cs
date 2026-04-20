@@ -12,9 +12,10 @@ public class AuditController(IAuditLogRepository auditRepo) : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetLogs([FromQuery] Guid? batchId, CancellationToken ct)
     {
-        var logs = (await auditRepo.GetAllAsync(ct))
-            .Where(a => !batchId.HasValue || a.BatchId == batchId)
-            .OrderByDescending(a => a.OccurredAt);
-        return Ok(logs);
+        if (batchId.HasValue)
+            return Ok(await auditRepo.GetByBatchIdAsync(batchId.Value, ct));
+
+        var logs = await auditRepo.GetAllAsync(ct);
+        return Ok(logs.OrderByDescending(a => a.OccurredAt));
     }
 }
