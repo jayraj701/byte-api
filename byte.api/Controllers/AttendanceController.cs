@@ -19,31 +19,58 @@ public class AttendanceController(
     public async Task<IActionResult> Upload(IFormFile file, CancellationToken ct)
     {
         if (file is null || file.Length == 0)
-            return BadRequest("No file uploaded.");
+            return BadRequest(new { error = "No file uploaded." });
 
         var actor = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "system";
-        var batch = await attendanceService.IngestAsync(file, actor, ct);
 
-        return CreatedAtAction(nameof(GetRecords), new { batchId = batch.Id }, new
+        try
         {
-            batchId = batch.Id,
-            fileName = batch.FileName,
-            recordCount = (await recordRepo.GetByBatchIdAsync(batch.Id, ct)).Count()
-        });
+            var batch = await attendanceService.IngestAsync(file, actor, ct);
+            var records = await recordRepo.GetByBatchIdAsync(batch.Id, ct);
+            return CreatedAtAction(nameof(GetRecords), new { batchId = batch.Id }, new
+            {
+                batchId     = batch.Id,
+                fileName    = batch.FileName,
+                recordCount = records.Count()
+            });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
     }
 
     [HttpPost("{batchId:guid}/calculate")]
     public async Task<IActionResult> Calculate(Guid batchId, CancellationToken ct)
     {
         var actor = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "system";
-        var calculations = await calculationService.CalculateBatchAsync(batchId, actor, ct);
-        return Ok(calculations);
+
+        try
+        {
+            var calculations = await calculationService.CalculateBatchAsync(batchId, actor, ct);
+            return Ok(calculations);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound(new { error = $"Batch '{batchId}' not found." });
+        }
     }
 
     [HttpGet("{batchId:guid}/records")]
     public async Task<IActionResult> GetRecords(Guid batchId, CancellationToken ct)
     {
-        var records = await recordRepo.GetByBatchIdAsync(batchId, ct);
-        return Ok(records);
+        try
+        {
+            var records = await recordRepo.GetByBatchIdAsync(batchId, ct);
+            return Ok(records);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
     }
 }

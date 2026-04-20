@@ -139,4 +139,65 @@ public class FileParserServiceTests
 
         Assert.Throws<InvalidOperationException>(() => svc.Parse(file));
     }
+
+    [Fact]
+    public void ParseCsv_ShouldThrow_WhenRequiredColumnsAreMissing()
+    {
+        var content = "Emp_ID,Employee_Name,Department\nE001,John,Engineering\n";
+        var file = MakeCsvFile(content, "wrong_columns.csv");
+        var svc = new FileParserService();
+
+        var ex = Assert.Throws<InvalidOperationException>(() => svc.Parse(file));
+        Assert.Contains("missing required columns", ex.Message);
+        Assert.Contains("WorkerId", ex.Message);
+    }
+
+    [Fact]
+    public void ParseCsv_ShouldThrow_WithRowContext_WhenNumericFieldInvalid()
+    {
+        var content =
+            "WorkerId,WorkerName,Site,DaysPresent,DayRate,AdvanceDeduction\n" +
+            "W001,John,SiteA,NOT_A_NUMBER,85.00,200.00\n";
+        var file = MakeCsvFile(content, "bad_data.csv");
+        var svc = new FileParserService();
+
+        var ex = Assert.Throws<InvalidOperationException>(() => svc.Parse(file));
+        Assert.Contains("Cannot parse", ex.Message);
+        Assert.Contains("NOT_A_NUMBER", ex.Message);
+    }
+
+    [Fact]
+    public void ParseCsv_ShouldThrow_WhenFileIsEmpty()
+    {
+        var file = MakeCsvFile(string.Empty, "empty.csv");
+        var svc = new FileParserService();
+
+        var ex = Assert.Throws<InvalidOperationException>(() => svc.Parse(file));
+        Assert.Contains("empty", ex.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void ParseExcel_ShouldThrow_WhenRequiredColumnsAreMissing()
+    {
+        var stream = new MemoryStream();
+        using (var workbook = new XLWorkbook())
+        {
+            var ws = workbook.Worksheets.Add("Sheet1");
+            ws.Cell(1, 1).Value = "Emp_ID";
+            ws.Cell(1, 2).Value = "Employee_Name";
+            ws.Cell(2, 1).Value = "E001";
+            ws.Cell(2, 2).Value = "John";
+            workbook.SaveAs(stream);
+        }
+        stream.Position = 0;
+        var fileMock = new Mock<IFormFile>();
+        fileMock.Setup(f => f.FileName).Returns("wrong.xlsx");
+        fileMock.Setup(f => f.Length).Returns(stream.Length);
+        fileMock.Setup(f => f.OpenReadStream()).Returns(stream);
+
+        var svc = new FileParserService();
+        var ex = Assert.Throws<InvalidOperationException>(() => svc.Parse(fileMock.Object));
+        Assert.Contains("missing required columns", ex.Message);
+        Assert.Contains("WorkerId", ex.Message);
+    }
 }
